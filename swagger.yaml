@@ -1,0 +1,679 @@
+swagger: "2.0"
+info:
+  title: Team Project Planner
+  description: A project planner for tasks & team management.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Abhishek Dev
+    url: https://github.com/RuthraVed
+    email: abhishek44dev@gmail.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 0.0.1
+
+host: 192.168.1.102:5000
+basePath: /api
+schemes:
+  - https
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+  
+
+definitions:
+  User:
+    properties:
+      name:
+        type: string
+        example: jackie123
+      display_name:
+        type: string
+        example: Jackie Chan
+      description:
+        type: string
+        example: A smart guy.
+    required:
+      - name
+      - display_name
+      - description
+  Team:
+    properties:
+      name:
+        type: string
+        example: Agile Folks
+      description:
+        type: string
+        example: We follow agile.
+      admin:
+        type: integer
+        example: 7
+    required:
+      - name
+      - description
+      - admin
+  Board:
+    properties:
+      name:
+        type: string
+        example: Kanban Board
+      description:
+        type: string
+        example: A variant of agile technique.
+      team_id:
+        type: integer
+        example: 5
+    required:
+      - name
+      - description
+      - team_id
+  Task:
+    properties:
+      title:
+        type: string
+        example: Clear Logs
+      description:
+        type: string
+        example: A process in Kanban.
+      board_id:
+        type: integer
+        example: 3
+      user_id:
+        type: integer
+        example: 7
+    required:
+      - title
+      - description
+      - board_id
+      - user_id
+  Message:
+    properties:
+      message:
+        type: string
+        example: Some message.
+
+paths:
+  /user/create_user:
+    post:
+      operationId: resources.user_resource.create_user
+      tags:
+        - Create User
+      summary: Create & add a new User
+      parameters:
+        - in: body
+          name: user_json
+          description: The user to create.
+          required: True
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        201:
+          description: CREATED
+          schema:
+            type: object
+            properties:
+              userId:
+                type: integer
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+    
+  /user/list_users:
+    get:
+      operationId: resources.user_resource.list_users
+      tags:
+        - List All Users
+      summary: Detailed list of all users
+      description: View all the users
+      parameters:
+        - in: query
+          name: _limit
+          type: integer
+          description: To limit search records
+          required: False
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Message"
+        504:
+          description: Gateway Timeout
+          schema:
+            $ref: "#/definitions/Message"
+
+  /user/describe_user:
+    post:
+      operationId: resources.user_resource.describe_user
+      tags:
+        - Describe User
+      summary: Get user's details
+      description: To search for an user by id & return his/her details.
+      parameters:
+        - in: body
+          name: user_id_json
+          description: The user id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+      responses:
+        201:
+          description: CREATED
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /user/update_user:
+    post:
+      operationId: resources.user_resource.update_user
+      tags:
+        - Update User
+      summary: Update detail of an user
+      description: To search for an user by id & update his/her details.
+      parameters:
+        - in: body
+          name: new_details_json
+          description: The user id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              user:
+                type: object
+                properties:
+                  display_name:
+                    type: string
+                    example: Roshan
+                  description:
+                    type: string
+                    example: Senior Developer
+      responses:
+        201:
+          description: UPDATED
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+
+  /user/get_user_teams:
+    post:
+      operationId: resources.user_resource.get_user_teams
+      tags:
+        - Get User Teams
+      summary: Get all teams of the user
+      description: To search for an user by id & return his/her team details.
+      parameters:
+        - in: body
+          name: user_id_json
+          description: The user id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+      responses:
+        201:
+          description: CREATED
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Team"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+
+  /team/create_team:
+    post:
+      operationId: resources.team_resource.create_team
+      tags:
+        - Create Team
+      summary: Create & add a new Team
+      parameters:
+        - in: body
+          name: team_json
+          description: The team to create.
+          required: True
+          schema:
+            $ref: "#/definitions/Team"
+      responses:
+        201:
+          description: CREATED
+          schema:
+            type: object
+            properties:
+              teamId:
+                type: integer
+                example: 1
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+
+  /team/list_teams:
+    get:
+      operationId: resources.team_resource.list_teams
+      tags:
+        - List Teams
+      summary: Detailed list of all teams
+      description: View all the teams
+      parameters:
+        - in: query
+          name: _limit
+          type: integer
+          description: To limit search records
+          required: False
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Team"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Message"
+        504:
+          description: Gateway Timeout
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /team/describe_team:
+    post:
+      operationId: resources.team_resource.describe_team
+      tags:
+        - Describe Team
+      summary: Get team's details
+      description: To search for an team by id & details.
+      parameters:
+        - in: body
+          name: team_id_json
+          description: The team id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+      responses:
+        201:
+          description: CREATED
+          schema:
+            $ref: "#/definitions/Team"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+
+  /team/update_team:
+    post:
+      operationId: resources.team_resource.update_team
+      tags:
+        - Update Team
+      summary: Update detail of a team
+      description: To search for an team by id & update details.
+      parameters:
+        - in: body
+          name: new_details_json
+          description: The team id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              team:
+                $ref: "#/definitions/Team"
+      responses:
+        200:
+          description: SUCCESS
+          schema:
+            $ref: "#/definitions/Team"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /team/add_users:
+    post:
+      operationId: resources.team_resource.add_users_to_team
+      tags:
+        - Add Users To Team
+      summary: Add users in a team
+      description: To add users to a team.
+      parameters:
+        - in: body
+          name: team_users_json
+          description: Users to be added.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              users:
+                type: array
+                items:
+                 type: integer
+                 example: 10
+      responses:
+        200:
+          description: SUCCESS
+          schema:
+            $ref: "#/definitions/Message"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /team/remove_users:
+    post:
+      operationId: resources.team_resource.remove_users_from_team
+      tags:
+        - Remove Users From Team
+      summary: Remove users from a team
+      description: To remove users from the team.
+      parameters:
+        - in: body
+          name: team_users_json
+          description: Users to be removed.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              users:
+                type: array
+                items:
+                 type: integer
+                 example: 10
+      responses:
+        200:
+          description: SUCCESS
+          schema:
+            $ref: "#/definitions/Message"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /team/list_users:
+    post:
+      operationId: resources.team_resource.list_team_users
+      tags:
+        - List Team Users
+      summary: Get all users of the team
+      description: Get all users of the team.
+      parameters:
+        - in: body
+          name: team_id_json
+          description: The team id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+      responses:
+        201:
+          description: CREATED
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /board/create_board:
+    post:
+      operationId: resources.project_board_resource.create_board
+      tags:
+        - Create Board
+      summary: Create & add a new Board
+      parameters:
+        - in: body
+          name: new_board_json
+          description: The board to create.
+          required: True
+          schema:
+            $ref: "#/definitions/Board"
+      responses:
+        201:
+          description: CREATED
+          schema:
+            type: object
+            properties:
+              boardId:
+                type: integer
+                example: 1
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /board/add_task:
+    post:
+      operationId: resources.project_board_resource.add_task
+      tags:
+        - Add Task
+      summary: Create & add a task inside a given board
+      parameters:
+        - in: body
+          name: new_task_json
+          description: The task to create.
+          required: True
+          schema:
+            $ref: "#/definitions/Task"
+      responses:
+        201:
+          description: CREATED
+          schema:
+            type: object
+            properties:
+              taskId:
+                type: integer
+                example: 1
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /board/update_task_status:
+    post:
+      operationId: resources.project_board_resource.update_task_status
+      tags:
+        - Update Task status
+      summary: Update task by taskId
+      description: To search for a task by id & update status.
+      parameters:
+        - in: body
+          name: task_update_json
+          description: The task id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              status:
+                type: string
+                example: COMPLETE
+      responses:
+        200:
+          description: SUCCESS
+          schema:
+            $ref: "#/definitions/Message"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: USER NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+
+  /board/close_board:
+    post:
+      operationId: resources.project_board_resource.close_board
+      tags:
+        - Close Board
+      summary: Close board by boardId
+      description: To search for a board by id & change it's status to CLOSED.
+      parameters:
+        - in: body
+          name: board_id_json
+          description: The board id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+      responses:
+        200:
+          description: SUCCESS
+          schema:
+            $ref: "#/definitions/Message"
+        405:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: BOARD NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+            
+  /board/list_boards:
+    post:
+      operationId: resources.project_board_resource.list_boards
+      tags:
+        - List Boards
+      summary: Get all boards of the team
+      description: Get all boards of the team.
+      parameters:
+        - in: body
+          name: team_id_json
+          description: The team id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+      responses:
+        201:
+          description: CREATED
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Board"
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"
+
+  /board/export_board:
+    post:
+      operationId: resources.project_board_resource.export_board
+      tags:
+        - Export Board
+      summary: Export a board to the out folder.
+      description: Output a presentable view of the board and its tasks with the available data.
+      parameters:
+        - in: body
+          name: board_id_json
+          description: The board id to be searched.
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 2
+      responses:
+        200:
+          description: SUCCESS
+          schema:
+            type: object
+            properties:
+              out_file:
+                type: string
+                example: export_board.txt
+        400:
+          description: BAD REQUEST
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: NOT FOUND
+          schema:
+            $ref: "#/definitions/Message"

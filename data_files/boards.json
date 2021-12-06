@@ -1,0 +1,32 @@
+[
+    {
+       "name":"Evergreen",
+       "description":"logistical",
+       "team_id":1
+    },
+    {
+       "name":"Burning Wood",
+       "description":"zero administration",
+       "team_id":1
+    },
+    {
+       "name":"Bay",
+       "description":"client-server",
+       "team_id":1
+    },
+    {
+       "name":"Ruskin",
+       "description":"Multi-lateral",
+       "team_id":2
+    },
+    {
+       "name":"Harper",
+       "description":"Exclusive",
+       "team_id":2
+    },
+    {
+       "name":"Mccormick",
+       "description":"Reduced",
+       "team_id":2
+    }
+]
