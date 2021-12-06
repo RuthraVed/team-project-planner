@@ -1,6 +1,6 @@
 #User specificed
-out/
-db/
+out/*.txt
+db/*.db
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
