@@ -6,7 +6,16 @@ from models import User, Team
 from resources import user_resource, team_resource, project_board_resource
 
 CURRENT_DIR = Path.cwd()
-SQLITE_DB_FILE = CURRENT_DIR / 'db/team_project_planner.db'
+
+DB_DIR = CURRENT_DIR / 'db'
+OUT_DIR = CURRENT_DIR / 'out'
+
+# A condition to create a folder if not exists,
+# and if already exists, doesn't raise any FileExistsError
+DB_DIR.mkdir(parents=True, exist_ok=True)
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+SQLITE_DB_FILE = DB_DIR / 'team_project_planner.db'
 DATA_FILES = CURRENT_DIR / 'data_files/'
 
 
